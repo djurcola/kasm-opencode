@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Ensure DISPLAY is set for X clients inside the container
+export DISPLAY=${DISPLAY:-:1}
+
+# Wait briefly for the X server socket to be ready before launching the app
+for i in $(seq 1 30); do
+    if [ -S "/tmp/.X11-unix/X${DISPLAY#:}" ]; then
+        break
+    fi
+    sleep 0.5
+done
+
+# Launch OpenCode Desktop automatically when Openbox starts
+# --no-sandbox is required for Electron apps running inside Docker
+/usr/bin/OpenCode --no-sandbox &

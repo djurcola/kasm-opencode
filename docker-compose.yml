@@ -1,0 +1,74 @@
+services:
+  opencode-desktop:
+    # Option 1: Build locally
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - OPENCODE_VERSION=v1.14.28
+        - TARGETARCH=amd64
+
+    # Option 2: Use pre-built image from GitHub Container Registry
+    # Uncomment the line below and comment out the 'build:' block above
+    # image: ghcr.io/YOUR_USERNAME/opencode-desktop-docker:latest
+
+    container_name: opencode-desktop
+    environment:
+      # LinuxServer standard user/group mapping
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+
+      # Prevent image-encoding libraries (libjpeg-turbo, etc.) from
+      # busy-waiting on CPU cores. These match official Kasm Workspaces defaults.
+      - GOMP_SPINCOUNT=0
+      - OMP_WAIT_POLICY=PASSIVE
+
+      # KasmVNC web UI title and branding
+      - TITLE=OpenCode
+
+      # KasmVNC web UI password (optional - if unset, no auth required)
+      # Use HASHED_PASSWORD if you prefer not to pass plaintext
+      - PASSWORD=password
+
+      # Extra packages to install at container startup (space-separated)
+      # Example: "golang-go ruby rustc cargo"
+      - EXTRA_PACKAGES=
+
+      # CPU-only optimisation (no GPU available):
+      # Uncomment DISABLE_DRI to stop KasmVNC probing for a GPU.
+      # This also triggers automatic low-resource KasmVNC settings
+      # (24 fps cap, lower JPEG quality, bandwidth-priority encoding).
+      # Also uncomment WEBKIT_DISABLE_COMPOSITING_MODE to stop WebKitGTK
+      # from wasting CPU on software GPU compositing.
+      # - DISABLE_DRI=true
+      # - WEBKIT_DISABLE_COMPOSITING_MODE=1
+    volumes:
+      # Persistent storage for OpenCode config, auth, cache, plugins, and desktop settings
+      - ./opencode-data:/config
+
+      # Your projects workspace
+      - ./opencode-projects:/workspace
+
+      # Optional: custom branding (favicon.ico + icon.png) without rebuilding the image.
+      # Create a ./branding/ folder next to this file and place your icons there.
+      # - ./branding:/config/branding
+
+      # Optional: pass through the host Docker socket so OpenCode can run Docker commands
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      # KasmVNC web interface
+      - "3000:3000"
+
+    # Shared memory size — critical for WebKitGTK.
+    # Docker defaults to 64 MB, which causes WebKit to spawn extra processes
+    # and burn CPU. Official Kasm images recommend 512 MB for browsers.
+    shm_size: 512m
+
+    devices:
+      # Optional: GPU acceleration for Intel/AMD (DRI3)
+      # Remove or comment out if your host does not have /dev/dri
+      - /dev/dri:/dev/dri
+    # Uncomment the next line if you need Docker-in-Docker (not recommended for most setups)
+    # privileged: true
+    restart: unless-stopped

@@ -1,0 +1,18 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Environment files
+.env
+.env.example
+
+# Compose override files
+docker-compose.override.yml
+
+# Local data directories (should not be baked into the image)
+opencode-data/
+opencode-projects/

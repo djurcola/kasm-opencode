@@ -1,0 +1,164 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>opencode-desktop</Name>
+  <Repository>ghcr.io/djurcola/opencode-docker:latest</Repository>
+  <Registry>https://github.com/djurcola/opencode-docker/pkgs/container/opencode-docker</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>bash</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/djurcola/opencode-docker/issues</Support>
+  <Project>https://github.com/djurcola/opencode-docker</Project>
+  <Overview>
+    OpenCode Desktop running in a browser-accessible Linux desktop via KasmVNC.
+    OpenCode is an open-source AI coding agent. This container provides the
+    Desktop app streamed to your browser, with persistent config and project
+    workspace support.&#xD;
+    &#xD;
+    Access the web UI at port 3000. Create project folders in the Workspace&#xD;
+    path and initialise OpenCode inside each one.&#xD;
+    &#xD;
+    Optional: mount your host Docker socket to let OpenCode run Docker commands.&#xD;
+    Optional: add /dev/dri for Intel/AMD GPU acceleration if available.
+  </Overview>
+  <Category>Tools:Utilities</Category>
+  <WebUI>http://[IP]:[PORT:3000]/</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/djurcola/opencode-docker/main/unraid/opencode-desktop.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/anomalyco/opencode/dev/packages/console/app/src/asset/logo-ornate-light.svg</Icon>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled/>
+  <DonateText/>
+  <DonateLink/>
+  <Requires/>
+
+  <!-- Appdata / Config -->
+  <Config
+    Type="Path"
+    Name="Appdata"
+    Target="/config"
+    Default="/mnt/user/appdata/opencode-desktop"
+    Mode="rw"
+    Description="Persistent storage for OpenCode config, auth, cache, plugins, and desktop settings"
+    Display="always"
+    Required="true"
+    Mask="false"
+  />
+
+  <!-- Workspace / Projects -->
+  <Config
+    Type="Path"
+    Name="Workspace"
+    Target="/workspace"
+    Default="/mnt/user/opencode-projects"
+    Mode="rw"
+    Description="Your code projects workspace. Create subfolders per project here."
+    Display="always"
+    Required="false"
+    Mask="false"
+  />
+
+  <!-- Docker Socket (optional) -->
+  <Config
+    Type="Path"
+    Name="Docker Socket"
+    Target="/var/run/docker.sock"
+    Default="/var/run/docker.sock"
+    Mode="ro"
+    Description="Optional: Host Docker socket so OpenCode can run Docker commands"
+    Display="advanced"
+    Required="false"
+    Mask="false"
+  />
+
+  <!-- Web UI Port -->
+  <Config
+    Type="Port"
+    Name="Web UI"
+    Target="3000"
+    Default="3000"
+    Mode="tcp"
+    Description="KasmVNC web interface port"
+    Display="always"
+    Required="true"
+    Mask="false"
+  />
+
+  <!-- PUID -->
+  <Config
+    Type="Variable"
+    Name="PUID"
+    Target="PUID"
+    Default="99"
+    Mode=""
+    Description="User ID"
+    Display="advanced"
+    Required="false"
+    Mask="false"
+  />
+
+  <!-- PGID -->
+  <Config
+    Type="Variable"
+    Name="PGID"
+    Target="PGID"
+    Default="100"
+    Mode=""
+    Description="Group ID"
+    Display="advanced"
+    Required="false"
+    Mask="false"
+  />
+
+  <!-- Timezone -->
+  <Config
+    Type="Variable"
+    Name="Timezone"
+    Target="TZ"
+    Default="Etc/UTC"
+    Mode=""
+    Description="Timezone (e.g. Europe/London, America/New_York)"
+    Display="always"
+    Required="false"
+    Mask="false"
+  />
+
+  <!-- KasmVNC Password -->
+  <Config
+    Type="Variable"
+    Name="Password"
+    Target="PASSWORD"
+    Default=""
+    Mode=""
+    Description="Optional: Password for the KasmVNC web UI. Leave blank for no auth."
+    Display="always"
+    Required="false"
+    Mask="true"
+  />
+
+  <!-- Extra Packages -->
+  <Config
+    Type="Variable"
+    Name="Extra Packages"
+    Target="EXTRA_PACKAGES"
+    Default=""
+    Mode=""
+    Description="Optional: space-separated APT packages to install at container startup (e.g. golang-go ruby rustc cargo)"
+    Display="advanced"
+    Required="false"
+    Mask="false"
+  />
+
+  <!-- GPU Device (optional) -->
+  <Config
+    Type="Device"
+    Name="GPU"
+    Target=""
+    Default=""
+    Mode=""
+    Description="Optional: Intel/AMD GPU for DRI3 acceleration. Set to /dev/dri if available on your host. Remove if not needed."
+    Display="advanced"
+    Required="false"
+    Mask="false"
+  />
+</Container>

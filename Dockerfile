@@ -1,6 +1,6 @@
 FROM ghcr.io/linuxserver/baseimage-kasmvnc:ubuntunoble
 
-ARG OPENCODE_VERSION=v1.14.28
+ARG OPENCODE_VERSION=v1.14.29
 ARG TARGETARCH=amd64
 ARG OPENCODE_DEB_URL=https://github.com/anomalyco/opencode/releases/download/${OPENCODE_VERSION}/opencode-desktop-linux-${TARGETARCH}.deb
 
